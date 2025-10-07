@@ -12,6 +12,17 @@ body {
     text-align: center;
 }
 
+#reset-button {
+    font-size: 14px;
+    padding: 8px;
+    margin: 8px;
+}
+
+#score {
+    color: blue;
+    font-weight: bold;
+}
+
 #game-board {
     display: grid;
     grid-template-columns: repeat(4, 100px);
@@ -48,3 +59,4 @@ body {
     font-size: 0; /* Hidden number 0 */
 
 }
+
