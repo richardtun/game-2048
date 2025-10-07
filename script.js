@@ -4,25 +4,25 @@ let score = 0;
 const boardElement = document.getElementById('game-board');
 const scoreElement = document.getElementById('score');
 
-// === HÀM KHỞI TẠO VÀ HIỂN THỊ ===
+// === Init & Display ===
 
 function startGame() {
-    // 1. Khởi tạo lưới 4x4 toàn số 0
+    // 1. init grid 4x4 with full of 0
     board = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0));
     score = 0;
-    scoreElement.textContent = `Điểm: ${score}`;
+    scoreElement.textContent = `Score: ${score}`;
 
-    // 2. Thêm 2 số 2 ngẫu nhiên ban đầu
+    // 2. Add random 2 number 2 first
     addRandomTile();
     addRandomTile();
 
-    // 3. Hiển thị ra giao diện
+    // 3. display to the UI
     drawBoard();
-    console.log("Game đã bắt đầu!");
+    console.log("Game started!");
 }
 
 function drawBoard() {
-    boardElement.innerHTML = ''; // Xóa bảng cũ
+    boardElement.innerHTML = ''; // delete old board
 
     for (let r = 0; r < GRID_SIZE; r++) {
         for (let c = 0; c < GRID_SIZE; c++) {
@@ -30,17 +30,17 @@ function drawBoard() {
             const tile = document.createElement('div');
             tile.classList.add('tile');
             tile.setAttribute('data-value', tileValue);
-            tile.textContent = tileValue > 0 ? tileValue : ''; // Chỉ hiển thị số > 0
+            tile.textContent = tileValue > 0 ? tileValue : ''; // just display number > 0
             boardElement.appendChild(tile);
         }
     }
-    scoreElement.textContent = `Điểm: ${score}`;
+    scoreElement.textContent = `Score: ${score}`;
     checkGameOver();
 }
 
 function addRandomTile() {
     const emptyTiles = [];
-    // Tìm tất cả các ô trống
+    // Find all blank cells
     for (let r = 0; r < GRID_SIZE; r++) {
         for (let c = 0; c < GRID_SIZE; c++) {
             if (board[r][c] === 0) {
@@ -50,43 +50,43 @@ function addRandomTile() {
     }
 
     if (emptyTiles.length > 0) {
-        // Chọn ngẫu nhiên 1 ô trống
+        // Select random 1 blank cell
         const { r, c } = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-        // 90% là số 2, 10% là số 4
+        // 90% is number 2, 10% is number 4
         board[r][c] = Math.random() < 0.9 ? 2 : 4;
         return true;
     }
-    return false; // Không còn ô trống
+    return false; // no more blank cell
 }
 
-// === LOGIC CHUYỂN ĐỘNG CỐT LÕI ===
+// === LOGIC CORE MOVE ===
 
-// Hàm này sẽ nén (move) và hợp nhất (merge) một hàng/cột duy nhất
+// This function move and merge one line/column
 function operateLine(line) {
     let newScore = 0;
     let hasChanged = false;
 
-    // 1. Nén (Loại bỏ số 0 và dồn số lại)
+    // 1. Move (remove 0 and add the numbers)
     let filteredLine = line.filter(val => val !== 0);
     
-    // 2. Hợp nhất
+    // 2. Merge
     for (let i = 0; i < filteredLine.length - 1; i++) {
         if (filteredLine[i] === filteredLine[i+1]) {
             filteredLine[i] *= 2;
             newScore += filteredLine[i];
-            filteredLine.splice(i + 1, 1); // Xóa phần tử đã hợp nhất
-            filteredLine.push(0); // Thêm số 0 vào cuối để giữ kích thước
+            filteredLine.splice(i + 1, 1); // delete merged cell
+            filteredLine.push(0); // Add 0 to keep the size
             hasChanged = true;
         }
     }
 
-    // 3. Đệm lại số 0 (Pad)
+    // 3. Pad the number 0 again
     let newLine = Array(GRID_SIZE).fill(0);
     for(let i = 0; i < filteredLine.length; i++) {
         newLine[i] = filteredLine[i];
     }
     
-    // Kiểm tra xem có sự thay đổi nào xảy ra không
+    // Check to see if any changes have occurred
     if (line.join(',') !== newLine.join(',')) {
         hasChanged = true;
     }
@@ -94,38 +94,38 @@ function operateLine(line) {
     return { newLine, newScore, hasChanged };
 }
 
-// Hàm này gọi logic nén/hợp nhất cho toàn bộ bảng theo hướng di chuyển
+// This function calls the compaction/merge logic for the entire table in the move direction.
 function move(direction) {
     let boardChanged = false;
 
-    // Tạm lưu bảng trước khi di chuyển để so sánh
+    // Temporarily save the table before moving for comparison
     const oldBoard = JSON.parse(JSON.stringify(board));
 
-    // Lặp qua từng hàng hoặc cột
+    // Loop through each row or column
     for (let i = 0; i < GRID_SIZE; i++) {
         let line = [];
 
-        // 1. Lấy dữ liệu của hàng/cột tương ứng
+        // 1. Get data of corresponding row/column
         if (direction === 'LEFT' || direction === 'RIGHT') {
-            line = board[i]; // Lấy hàng i
+            line = board[i]; // get row i
         } else {
-            // Lấy cột i
+            // get column i
             for (let j = 0; j < GRID_SIZE; j++) {
                 line.push(board[j][i]);
             }
         }
         
-        // 2. Xử lý logic đảo chiều cho RIGHT và DOWN
+        // 2. Handle reversal logic for RIGHT and DOWN
         if (direction === 'RIGHT' || direction === 'DOWN') {
             line.reverse();
         }
 
-        // 3. Thực hiện nén và hợp nhất
+        // 3. Perform compression and merge
         let { newLine, newScore, hasChanged } = operateLine(line);
         score += newScore;
         if (hasChanged) boardChanged = true;
 
-        // 4. Xử lý logic đảo chiều lại và cập nhật bảng
+        // 4. Handle the reverse logic and update the table
         if (direction === 'RIGHT' || direction === 'DOWN') {
             newLine.reverse();
         }
@@ -139,50 +139,50 @@ function move(direction) {
         }
     }
 
-    // 5. Thêm ô ngẫu nhiên và vẽ lại bảng nếu có thay đổi
+    // 5. Add random cells and redraw the table if changes are made
     if (boardChanged) {
         addRandomTile();
         drawBoard();
     }
 }
 
-// === KIỂM TRA TRẠNG THÁI GAME ===
+// === CHECK GAME STATUS ===
 
 function checkGameOver() {
-    // 1. Kiểm tra đã thắng chưa (ví dụ: đạt 2048)
+    // 1. Check if you won (e.g. reached 2048)
     for (let r = 0; r < GRID_SIZE; r++) {
         for (let c = 0; c < GRID_SIZE; c++) {
             if (board[r][c] === 2048) {
-                setTimeout(() => alert("Chúc mừng! Bạn đã đạt 2048!"), 10);
-                // Có thể dừng game ở đây
+                setTimeout(() => alert("Congratulations! You have reached 2048!"), 10);
+                // can stop the game here.
                 return;
             }
         }
     }
 
-    // 2. Kiểm tra Game Over (không còn ô trống VÀ không còn nước đi hợp nhất nào)
+    // 2. Check Game Over (no more empty squares AND no more fusion moves)
     const emptyExists = board.some(row => row.includes(0));
     if (emptyExists) {
-        return; // Vẫn còn ô trống, chưa Game Over
+        return; // There are still empty cells, not Game Over yet
     }
 
-    // Tạo một bản sao để kiểm tra xem có nước đi nào không (mà không thay đổi bảng gốc)
+    // Make a copy to check if there are any moves (without changing the original board)
     const canMove = canMerge();
 
     if (!canMove) {
-        setTimeout(() => alert(`Game Over! Điểm cuối cùng của bạn là: ${score}`), 10);
-        // Có thể vô hiệu hóa input ở đây
+        setTimeout(() => alert(`Game Over! Your final score is: ${score}`), 10);
+        // Input can be disabled here
     }
 }
 
 function canMerge() {
-    // Kiểm tra hàng ngang
+    // Check row
     for (let r = 0; r < GRID_SIZE; r++) {
         for (let c = 0; c < GRID_SIZE - 1; c++) {
             if (board[r][c] !== 0 && board[r][c] === board[r][c + 1]) return true;
         }
     }
-    // Kiểm tra hàng dọc
+    // Check column
     for (let c = 0; c < GRID_SIZE; c++) {
         for (let r = 0; r < GRID_SIZE - 1; r++) {
             if (board[r][c] !== 0 && board[r][c] === board[r + 1][c]) return true;
@@ -191,7 +191,7 @@ function canMerge() {
     return false;
 }
 
-// === XỬ LÝ SỰ KIỆN BÀN PHÍM ===
+// === KEYBOARD EVENT HANDLING ===
 
 document.addEventListener('keydown', (e) => {
     switch (e.key) {
@@ -218,8 +218,9 @@ document.addEventListener('keydown', (e) => {
         default:
             return;
     }
-    e.preventDefault(); // Ngăn trình duyệt cuộn khi nhấn phím mũi tên
+    e.preventDefault(); // Prevent browser from scrolling when arrow keys are pressed
 });
 
-// Khởi động game lần đầu khi trang được tải
+// Start the game the first time the page loads
+
 window.onload = startGame;
