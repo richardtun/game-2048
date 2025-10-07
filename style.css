@@ -36,14 +36,15 @@ body {
     color: #776e65;
 }
 
-/* Thêm màu sắc cho các ô số để dễ phân biệt */
+/* Add color to the number boxes for easy distinction */
 .tile[data-value="2"] { background-color: #eee4da; }
 .tile[data-value="4"] { background-color: #ede0c8; }
 .tile[data-value="8"] { background-color: #f2b179; color: #f9f6f2; }
 .tile[data-value="16"] { background-color: #f59563; color: #f9f6f2; }
-/* ... (Bạn có thể thêm nhiều quy tắc cho các số lớn hơn) */
+/* ... (You can add more rules for larger numbers) */
 
 .tile[data-value="0"] {
-    background-color: #cdc1b4; /* Trả về màu nền trống */
-    font-size: 0; /* Ẩn số 0 */
+    background-color: #cdc1b4; /* Returns an empty background color */
+    font-size: 0; /* Hidden number 0 */
+
 }
