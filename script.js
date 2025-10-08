@@ -153,24 +153,29 @@ function operateLine(line) {
 
 function move(direction) {
     let boardChanged = false;
-    let allMovements = []; // Tổng hợp tất cả chuyển động từ 4 hàng/cột
+    let allMovements = []; 
 
-    // Tương tự hàm move cũ, nhưng giờ chúng ta làm việc với Object và thu thập movements
-    // ... (Phần lặp qua 4 hàng/cột và đảo ngược direction tương tự như hàm move cũ)
-    
     for (let i = 0; i < GRID_SIZE; i++) {
         let line = [];
-        
-        // 1. Lấy dòng/cột (và bỏ qua các ô rỗng 0, chỉ lấy Object)
+        let rowIndices = []; // Lưu chỉ số hàng
+        let colIndices = []; // Lưu chỉ số cột
+
+        // 1. Lấy dữ liệu dòng/cột và chỉ số của chúng
         if (direction === 'LEFT' || direction === 'RIGHT') {
             line = board[i];
+            for(let j = 0; j < GRID_SIZE; j++) {
+                rowIndices.push(i);
+                colIndices.push(j);
+            }
         } else {
             for (let j = 0; j < GRID_SIZE; j++) {
                 line.push(board[j][i]);
+                rowIndices.push(j);
+                colIndices.push(i);
             }
         }
         
-        // 2. Tạo một bản sao chỉ chứa {value, id} để xử lý trong operateLine
+        // 2. Tạo bản sao để xử lý và xử lý đảo chiều
         let lineForProcessing = line.map(item => item === 0 ? 0 : { ...item });
 
         if (direction === 'RIGHT' || direction === 'DOWN') {
@@ -182,19 +187,23 @@ function move(direction) {
         score += newScore;
         if (hasChanged) boardChanged = true;
 
-        // 4. Xử lý logic đảo chiều lại và cập nhật bảng (GIỜ ĐÂY PHỨC TẠP HƠN)
+        // 4. Xử lý logic đảo chiều lại và CẬP NHẬT BOARD (PHẦN QUAN TRỌNG)
         if (direction === 'RIGHT' || direction === 'DOWN') {
             newLine.reverse();
         }
 
-        // Cập nhật lại board và thu thập movements (Cần tính toán lại tọa độ)
+        // Cập nhật lại board chính thức và thu thập movements
         for (let j = 0; j < GRID_SIZE; j++) {
-            let row = (direction === 'LEFT' || direction === 'RIGHT') ? i : j;
-            let col = (direction === 'LEFT' || direction === 'RIGHT') ? j : i;
+            const row = rowIndices[j];
+            const col = colIndices[j];
             
-            // Xử lý movements
+            // Cập nhật lại board chính thức bằng kết quả xử lý
+            board[row][col] = newLine[j];
+
+            // Xử lý movements (chỉ khi ô không phải là 0)
             const currentTile = newLine[j];
             if (currentTile !== 0) {
+                // Kiểm tra xem ID của ô này có nằm trong movements đã tạo ra không
                 const moveData = movements.find(m => m.fromId === currentTile.id);
                 if (moveData) {
                     allMovements.push({ 
@@ -204,13 +213,10 @@ function move(direction) {
                     });
                 }
             }
-
-            // Cập nhật lại board chính thức
-            board[row][col] = newLine[j];
         }
     }
 
-    // 5. THỰC HIỆN HIỆU ỨNG VÀ CẬP NHẬT GIAO DIỆN (MỚI)
+    // 5. THỰC HIỆN HIỆU ỨNG
     if (boardChanged) {
         animateTiles(allMovements).then(() => {
             // Sau khi hiệu ứng kết thúc, thêm ô mới và kiểm tra Game Over
@@ -363,4 +369,5 @@ boardElement.addEventListener('touchstart', handleStart);
 
 // Khởi động game lần đầu khi trang được tải
 window.onload = startGame;
+
 
