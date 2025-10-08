@@ -71,4 +71,11 @@
 .tile[data-value="2"] { background-color: #eee4da; }
 .tile[data-value="4"] { background-color: #ede0c8; }
 .tile[data-value="8"] { background-color: #f2b179; color: #f9f6f2; }
-/* ... (các số lớn hơn) */
+.tile[data-value="16"] { background-color: #f59563; color: #f9f6f2; }
+.tile[data-value="32"] { background-color: #cbe638; color: #f9f6f2; }
+.tile[data-value="64"] { background-color: #4cce25; color: #f9f6f2; }
+.tile[data-value="128"] { background-color: #149b57; color: #f9f6f2; }
+.tile[data-value="256"] { background-color: #2971df; color: #f9f6f2; }
+.tile[data-value="512"] { background-color: #d249ee; color: #f9f6f2; }
+.tile[data-value="1024"] { background-color: #f136c9; color: #f9f6f2; }
+.tile[data-value="2048"] { background-color: #f1364f; color: #f9f6f2; }
