@@ -9,6 +9,9 @@ let startX = 0;
 let startY = 0;
 const threshold = 50; // Minimum distance (pixels) to count as a swipe
 
+let highScore = 0;
+const highScoreElement = document.getElementById('high-score'); // add element to get high-score
+
 // === Init & Display ===
 
 function startGame() {
@@ -17,6 +20,8 @@ function startGame() {
     score = 0;
     scoreElement.textContent = `Score: ${score}`;
 
+    loadHighScore();
+    
     // 2. Add random 2 number 2 first
     addRandomTile();
     addRandomTile();
@@ -24,6 +29,23 @@ function startGame() {
     // 3. display to the UI
     drawBoard();
     console.log("Game started!");
+}
+
+function loadHighScore() {
+    // Lấy điểm cao nhất từ localStorage, nếu không có thì mặc định là 0
+    const storedHighScore = localStorage.getItem('2048HighScore');
+    highScore = storedHighScore ? parseInt(storedHighScore) : 0;
+    highScoreElement.textContent = `Điểm cao nhất: ${highScore}`;
+}
+
+function updateHighScore() {
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('2048HighScore', highScore);
+        highScoreElement.textContent = `High score: ${highScore}`;
+        return true;
+    }
+    return false;
 }
 
 function drawBoard() {
@@ -146,6 +168,8 @@ function move(direction) {
 
     // 5. Add random cells and redraw the table if changes are made
     if (boardChanged) {
+        updateHighScore();
+        
         addRandomTile();
         drawBoard();
     }
@@ -293,3 +317,4 @@ boardElement.addEventListener('touchstart', handleStart);
 
 // Start the game the first time the page loads
 window.onload = startGame;
+
