@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column; /* Đảm bảo căn giữa theo chiều dọc */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -13,16 +12,19 @@ body {
     text-align: center;
 }
 
-/* ==================================== */
-/* === CẤU TRÚC BẢNG GAME (LƯỚI) === */
-/* ==================================== */
+#reset-button {
+    font-size: 14px;
+    padding: 8px;
+    margin: 8px;
+}
+
+#score {
+    color: blue;
+    font-weight: bold;
+}
 
 #game-board {
-    /* Đảm bảo các phần tử con dùng position: absolute sẽ tương đối với #game-board */
-    position: relative;
-    
-    /* Vẫn dùng Grid để định vị các ô nền */
-    display: grid; 
+    display: grid;
     grid-template-columns: repeat(4, 100px);
     grid-template-rows: repeat(4, 100px);
     gap: 10px;
@@ -32,31 +34,10 @@ body {
     margin-bottom: 20px;
 }
 
-/* Các ô nền cố định */
-.grid-cell {
+.tile {
     width: 100px;
     height: 100px;
     background-color: #cdc1b4;
-    border-radius: 3px;
-}
-
-/* ==================================== */
-/* === Ô SỐ (TILE) VÀ HIỆU ỨNG === */
-/* ==================================== */
-
-/* Container cho ô số, dùng để trượt */
-.tile-container {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    /* Hiệu ứng chuyển động mượt mà */
-    transition: transform 150ms ease-in-out; 
-}
-
-/* Nội dung bên trong ô số */
-.tile {
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -66,46 +47,22 @@ body {
     color: #776e65;
 }
 
-/* --- HIỆU ỨNG --- */
-
-/* Hiệu ứng hợp nhất (nhảy nhẹ) */
-.tile.tile-merged {
-    animation: bounce 200ms ease;
-}
-
-@keyframes bounce {
-    0% { transform: scale(0.9); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Hiệu ứng xuất hiện (phóng to) */
-.tile.tile-new {
-    animation: pop 200ms ease;
-}
-
-@keyframes pop {
-    0% { transform: scale(0); }
-    100% { transform: scale(1); }
-}
-
-/* --- MÀU SẮC CHO CÁC Ô SỐ --- */
-
-.tile[data-value="0"] { background-color: #cdc1b4; font-size: 0; }
+/* Add color to the number boxes for easy distinction */
 .tile[data-value="2"] { background-color: #eee4da; }
 .tile[data-value="4"] { background-color: #ede0c8; }
 .tile[data-value="8"] { background-color: #f2b179; color: #f9f6f2; }
 .tile[data-value="16"] { background-color: #f59563; color: #f9f6f2; }
-.tile[data-value="32"] { background-color: #f67c5f; color: #f9f6f2; }
-.tile[data-value="64"] { background-color: #f65e3b; color: #f9f6f2; }
-.tile[data-value="128"] { background-color: #edcf72; color: #f9f6f2; font-size: 25px; }
-.tile[data-value="256"] { background-color: #edcc61; color: #f9f6f2; font-size: 25px; }
-.tile[data-value="512"] { background-color: #edc850; color: #f9f6f2; font-size: 25px; }
-.tile[data-value="1024"] { background-color: #edc53f; color: #f9f6f2; font-size: 20px; }
-.tile[data-value="2048"] { background-color: #edc22e; color: #f9f6f2; font-size: 20px; }
-/* Các ô lớn hơn 2048 */
-.tile[data-value] {
-    background-color: #3c3a32;
-    color: #f9f6f2;
-    font-size: 20px;
+.tile[data-value="32"] { background-color: #cbe638; color: #f9f6f2; }
+.tile[data-value="64"] { background-color: #4cce25; color: #f9f6f2; }
+.tile[data-value="128"] { background-color: #149b57; color: #f9f6f2; }
+.tile[data-value="256"] { background-color: #2971df; color: #f9f6f2; }
+.tile[data-value="512"] { background-color: #d249ee; color: #f9f6f2; }
+.tile[data-value="1024"] { background-color: #f136c9; color: #f9f6f2; }
+.tile[data-value="2048"] { background-color: #f1364f; color: #f9f6f2; }
+
+.tile[data-value="0"] {
+    background-color: #cdc1b4; /* Returns an empty background color */
+    font-size: 0; /* Hidden number 0 */
+
 }
+
