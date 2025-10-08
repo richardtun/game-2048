@@ -4,6 +4,11 @@ let score = 0;
 const boardElement = document.getElementById('game-board');
 const scoreElement = document.getElementById('score');
 
+// track swipe location
+let startX = 0;
+let startY = 0;
+const threshold = 50; // Minimum distance (pixels) to count as a swipe
+
 // === Init & Display ===
 
 function startGame() {
@@ -221,6 +226,71 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault(); // Prevent browser from scrolling when arrow keys are pressed
 });
 
-// Start the game the first time the page loads
+// === SWIPE EVENT HANDLING (MOUSE AND TOUCH) ===
 
+function handleStart(e) {
+    // Save start coordinates (for both mouse and touch)
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    startX = clientX;
+    startY = clientY;
+    
+    // Prevent page scrolling on mobile while swiping on the game board
+    if (e.touches) {
+        boardElement.addEventListener('touchmove', handleMove, { passive: false });
+        boardElement.addEventListener('touchend', handleEnd, { once: true });
+    }
+}
+
+function handleMove(e) {
+    if (e.touches) {
+        // Prevent default browser scrolling behavior for smoother swiping
+        e.preventDefault(); 
+    }
+}
+
+function handleEnd(e) {
+    // Get end coordinates (for both mouse and touch)
+    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+    const diffX = clientX - startX;
+    const diffY = clientY - startY;
+
+    // Check if this is a significant swipe
+    if (Math.abs(diffX) > threshold || Math.abs(diffY) > threshold) {
+        let direction = '';
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            // Swipe horizontally (LEFT/RIGHT)
+            direction = diffX > 0 ? 'RIGHT' : 'LEFT';
+        } else {
+            // Swipe vertically (UP/DOWN)
+            direction = diffY > 0 ? 'DOWN' : 'UP';
+        }
+        
+        if (direction) {
+            move(direction);
+        }
+    }
+    
+    // Remove 'touchmove' listener after finishing
+    if (e.touches) {
+        boardElement.removeEventListener('touchmove', handleMove);
+    }
+}
+
+// === ADD LISTENER TO GAME BOARD ===
+
+// Add events for mouse (mousedown/mouseup)
+boardElement.addEventListener('mousedown', handleStart);
+document.addEventListener('mouseup', handleEnd); // Attach to document to catch even when mouse leaves table
+
+// Add event for touch (touchstart/touchend)
+boardElement.addEventListener('touchstart', handleStart);
+// Note: The touchmove/touchend events are dynamically attached in handleStart
+
+// Start the game the first time the page loads
 window.onload = startGame;
+
