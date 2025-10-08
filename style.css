@@ -102,4 +102,10 @@ body {
 .tile[data-value="256"] { background-color: #edcc61; color: #f9f6f2; font-size: 25px; }
 .tile[data-value="512"] { background-color: #edc850; color: #f9f6f2; font-size: 25px; }
 .tile[data-value="1024"] { background-color: #edc53f; color: #f9f6f2; font-size: 20px; }
-.tile[data-value="2048"] { background-color: #edc22e; color: #f9f6f2
+.tile[data-value="2048"] { background-color: #edc22e; color: #f9f6f2; font-size: 20px; }
+/* Các ô lớn hơn 2048 */
+.tile[data-value] {
+    background-color: #3c3a32;
+    color: #f9f6f2;
+    font-size: 20px;
+}
