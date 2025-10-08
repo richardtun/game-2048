@@ -1,10 +1,30 @@
-/* --- PHẦN NỀN LƯỚI VÀ KÍCH THƯỚC CỐ ĐỊNH --- */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #faf8ef;
+    margin: 0;
+}
+
+#game-container {
+    text-align: center;
+}
+
+#reset-button {
+    font-size: 14px;
+    padding: 8px;
+    margin: 8px;
+}
+
+#score {
+    color: blue;
+    font-weight: bold;
+}
+
 #game-board {
-    /* Đảm bảo các phần tử con dùng position: absolute sẽ tương đối với #game-board */
-    position: relative;
-    
-    /* Vẫn dùng Grid để định vị các ô nền */
-    display: grid; 
+    display: grid;
     grid-template-columns: repeat(4, 100px);
     grid-template-rows: repeat(4, 100px);
     gap: 10px;
@@ -14,28 +34,10 @@
     margin-bottom: 20px;
 }
 
-/* Các ô nền cố định */
-.grid-cell {
+.tile {
     width: 100px;
     height: 100px;
     background-color: #cdc1b4;
-    border-radius: 3px;
-}
-
-/* --- PHẦN Ô SỐ (TILE) CÓ HIỆU ỨNG TRƯỢT VÀ HỢP NHẤT --- */
-
-/* Vị trí tuyệt đối cho phép chúng ta di chuyển ô số độc lập với lưới */
-.tile-container {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    /* Hiệu ứng chuyển động mượt mà */
-    transition: transform 150ms ease-in-out; 
-}
-
-.tile {
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,29 +47,7 @@
     color: #776e65;
 }
 
-/* Hiệu ứng hợp nhất (nhảy nhẹ) */
-.tile.tile-merged {
-    animation: bounce 200ms ease;
-}
-
-@keyframes bounce {
-    0% { transform: scale(0.9); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Hiệu ứng xuất hiện (phóng to) */
-.tile.tile-new {
-    animation: pop 200ms ease;
-}
-
-@keyframes pop {
-    0% { transform: scale(0); }
-    100% { transform: scale(1); }
-}
-
-/* Đảm bảo màu sắc cho các ô số (Nếu bạn đã có thì giữ lại, nếu chưa có thì thêm) */
-.tile[data-value="0"] { background-color: #cdc1b4; font-size: 0; }
+/* Add color to the number boxes for easy distinction */
 .tile[data-value="2"] { background-color: #eee4da; }
 .tile[data-value="4"] { background-color: #ede0c8; }
 .tile[data-value="8"] { background-color: #f2b179; color: #f9f6f2; }
@@ -79,3 +59,10 @@
 .tile[data-value="512"] { background-color: #d249ee; color: #f9f6f2; }
 .tile[data-value="1024"] { background-color: #f136c9; color: #f9f6f2; }
 .tile[data-value="2048"] { background-color: #f1364f; color: #f9f6f2; }
+
+.tile[data-value="0"] {
+    background-color: #cdc1b4; /* Returns an empty background color */
+    font-size: 0; /* Hidden number 0 */
+
+}
+
