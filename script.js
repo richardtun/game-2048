@@ -256,6 +256,7 @@ function animateTiles(movements) {
             // Xóa lớp 'merged' để sẵn sàng cho lần hợp nhất tiếp theo
             tileMap.forEach(data => {
                 data.element.firstChild.classList.remove('tile-merged');
+                data.element.firstChild.classList.remove('tile-new');
             });
             resolve();
         }, maxDuration + 200); // 150ms trượt + 200ms hợp nhất
@@ -336,3 +337,4 @@ document.addEventListener('mouseup', handleEnd);
 boardElement.addEventListener('touchstart', handleStart);
 
 window.onload = startGame;
+
