@@ -266,8 +266,101 @@ function animateTiles(movements) {
     });
 }
 
+// ===============================================
+// === 7. XỬ LÝ SỰ KIỆN BÀN PHÍM VÀ VUỐT ===
+// ===============================================
 
-// Chú ý: Cần cập nhật lại phần xử lý phím và chạm để gọi hàm move mới.
-// (Phần này không thay đổi, chỉ cần đảm bảo gọi move(direction) như cũ)
+// --- Biến theo dõi cho CỬ CHỈ VUỐT ---
+let startX = 0;
+let startY = 0;
+const threshold = 50; // Khoảng cách tối thiểu (pixel) để tính là một cú vuốt
 
+// --- Xử lý BÀN PHÍM ---
+document.addEventListener('keydown', (e) => {
+    switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+            move('UP');
+            break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+            move('DOWN');
+            break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+            move('LEFT');
+            break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+            move('RIGHT');
+            break;
+        default:
+            return;
+    }
+    e.preventDefault(); // Ngăn trình duyệt cuộn khi nhấn phím mũi tên
+});
+
+// --- Xử lý CỬ CHỈ VUỐT (Chuột và Chạm) ---
+
+function handleStart(e) {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    startX = clientX;
+    startY = clientY;
+    
+    // Gắn listener cho cử chỉ chạm (vì chuột đã có document.mouseup)
+    if (e.touches) {
+        boardElement.addEventListener('touchmove', handleMove, { passive: false });
+        boardElement.addEventListener('touchend', handleEnd, { once: true });
+    }
+}
+
+function handleMove(e) {
+    if (e.touches) {
+        e.preventDefault(); 
+    }
+}
+
+function handleEnd(e) {
+    // Lấy tọa độ kết thúc
+    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+    const diffX = clientX - startX;
+    const diffY = clientY - startY;
+
+    if (Math.abs(diffX) > threshold || Math.abs(diffY) > threshold) {
+        let direction = '';
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            // Vuốt ngang
+            direction = diffX > 0 ? 'RIGHT' : 'LEFT';
+        } else {
+            // Vuốt dọc
+            direction = diffY > 0 ? 'DOWN' : 'UP';
+        }
+        
+        if (direction) {
+            move(direction);
+        }
+    }
+    
+    // Dọn dẹp listener touchmove
+    if (e.touches) {
+        boardElement.removeEventListener('touchmove', handleMove);
+    }
+}
+
+// Gắn listener khởi tạo
+boardElement.addEventListener('mousedown', handleStart);
+document.addEventListener('mouseup', handleEnd); 
+boardElement.addEventListener('touchstart', handleStart);
+
+// Khởi động game lần đầu khi trang được tải
 window.onload = startGame;
+
