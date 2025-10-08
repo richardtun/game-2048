@@ -336,6 +336,3 @@ document.addEventListener('mouseup', handleEnd);
 boardElement.addEventListener('touchstart', handleStart);
 
 window.onload = startGame;
-
-
-
