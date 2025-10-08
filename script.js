@@ -252,14 +252,37 @@ function animateTiles(movements) {
         });
 
         // Chờ tất cả hiệu ứng chuyển động và hợp nhất kết thúc
-        setTimeout(() => {
+        /*setTimeout(() => {
             // Xóa lớp 'merged' để sẵn sàng cho lần hợp nhất tiếp theo
             tileMap.forEach(data => {
                 data.element.firstChild.classList.remove('tile-merged');
                 data.element.firstChild.classList.remove('tile-new');
             });
             resolve();
-        }, maxDuration + 200); // 150ms trượt + 200ms hợp nhất
+        }, maxDuration + 200); // 150ms trượt + 200ms hợp nhất*/
+
+        // ... bên trong animateTiles(movements)
+        return new Promise(resolve => {
+            // Thời gian chờ: 150ms (trượt) + 200ms (pop/bounce)
+            setTimeout(() => {
+                
+                // DỌN DẸP LỚP CSS TẠM THỜI
+                tileMap.forEach(data => {
+                    // Kiểm tra xem phần tử con (inner tile) có còn tồn tại không. 
+                    // Điều này ngăn lỗi khi cố gắng thao tác với ô đã bị xóa do hợp nhất.
+                    const innerTile = data.element.firstChild; 
+                    if (innerTile) {
+                        innerTile.classList.remove('tile-merged');
+                        innerTile.classList.remove('tile-new'); 
+                    }
+                });
+    
+                // ... (Đảm bảo bạn có logic cập nhật DOM tại đây, nếu cần)
+                
+                resolve();
+            }, maxDuration + 200);
+        });
+            
     });
 }
 
@@ -337,4 +360,5 @@ document.addEventListener('mouseup', handleEnd);
 boardElement.addEventListener('touchstart', handleStart);
 
 window.onload = startGame;
+
 
