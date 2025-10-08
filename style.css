@@ -23,6 +23,11 @@ body {
     font-weight: bold;
 }
 
+#high-score {
+    color: red;
+    font-weight: bold;
+}
+
 #game-board {
     display: grid;
     grid-template-columns: repeat(4, 100px);
@@ -65,4 +70,5 @@ body {
     font-size: 0; /* Hidden number 0 */
 
 }
+
 
