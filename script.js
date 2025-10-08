@@ -96,9 +96,10 @@ function addRandomTile() {
 function operateLine(line) {
     let newScore = 0;
     let hasChanged = false;
-    let movements = []; // Lưu trữ các hành động di chuyển/hợp nhất
+    let movements = []; 
 
     // 1. Nén (Loại bỏ ô rỗng)
+    // Dùng filter để loại bỏ số 0 (hoặc ô rỗng) khỏi bản sao dòng
     let filteredLine = line.filter(item => item !== 0);
     
     // 2. Hợp nhất
@@ -106,7 +107,9 @@ function operateLine(line) {
         const currentTile = filteredLine[i];
         const nextTile = filteredLine[i+1];
         
-        if (currentTile.value === nextTile.value) {
+        // Chỉ hợp nhất nếu cả hai ô đều là Object và có giá trị bằng nhau
+        if (currentTile && nextTile && currentTile.value === nextTile.value) {
+            
             // Ghi nhận hành động hợp nhất (nextTile hợp nhất vào currentTile)
             movements.push({ 
                 fromId: nextTile.id, 
@@ -115,34 +118,34 @@ function operateLine(line) {
                 newValue: currentTile.value * 2
             });
             
-            // Cập nhật giá trị ô đích
-            currentTile.value *= 2;
+            // *** ĐÂY LÀ DÒNG LÀM TĂNG GẤP ĐÔI GIÁ TRỊ ***
+            currentTile.value *= 2; 
             newScore += currentTile.value;
             
             // Xóa ô đã hợp nhất và đẩy ô trống vào cuối
-            filteredLine.splice(i + 1, 1);
-            filteredLine.push(0);
+            filteredLine.splice(i + 1, 1); 
+            filteredLine.push(0); 
             hasChanged = true;
         }
     }
-    
-    // 3. Tạo dòng mới (bao gồm các ô rỗng ở cuối)
+
+    // 3. Tạo dòng mới (đã được xử lý)
     let newLine = filteredLine.map(item => item === 0 ? 0 : item);
 
-    // 4. Ghi nhận hành động di chuyển của các ô còn lại
+    // 4. Ghi nhận hành động di chuyển của các ô còn lại (cho hiệu ứng)
     for (let i = 0; i < newLine.length; i++) {
         if (newLine[i] !== 0) {
+            // Kiểm tra xem nó có phải là ô đã hợp nhất hay không
+            const isMerged = movements.some(m => m.toId === newLine[i].id);
+            
             movements.push({ 
                 fromId: newLine[i].id, 
-                toIndex: i, // Vị trí cuối cùng trong dòng
-                merged: false 
+                toIndex: i, 
+                merged: isMerged,
             });
         }
     }
 
-    // Kiểm tra xem có sự thay đổi vị trí nào không (cần so sánh phức tạp hơn)
-    // Để đơn giản, ta dựa vào `movements` và `hasChanged`
-    
     // Đệm thêm số 0 để đủ 4 phần tử
     while (newLine.length < GRID_SIZE) {
         newLine.push(0);
@@ -369,5 +372,6 @@ boardElement.addEventListener('touchstart', handleStart);
 
 // Khởi động game lần đầu khi trang được tải
 window.onload = startGame;
+
 
 
