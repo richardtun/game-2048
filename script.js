@@ -35,7 +35,7 @@ function loadHighScore() {
     // Lấy điểm cao nhất từ localStorage, nếu không có thì mặc định là 0
     const storedHighScore = localStorage.getItem('2048HighScore');
     highScore = storedHighScore ? parseInt(storedHighScore) : 0;
-    highScoreElement.textContent = `Điểm cao nhất: ${highScore}`;
+    highScoreElement.textContent = `High score: ${highScore}`;
 }
 
 function updateHighScore() {
@@ -317,4 +317,5 @@ boardElement.addEventListener('touchstart', handleStart);
 
 // Start the game the first time the page loads
 window.onload = startGame;
+
 
